@@ -1,0 +1,59 @@
+factors:
+  credit_hy:
+    source: fred
+    ticker: BAMLH0A0HYM2
+    transform: diff_5d
+    weight: 0.30
+    lead_expected: true
+
+  credit_ig:
+    source: fred
+    ticker: BAMLC0A0CM
+    transform: diff_5d
+    weight: 0.10
+
+  vix_term_structure:
+    source: yahoo
+    tickers: [^VIX, ^VIX3M]
+    transform: ratio_minus_one
+    weight: 0.20
+
+  move:
+    source: yahoo
+    ticker: ^MOVE
+    transform: diff_20d_pct
+    weight: 0.15
+
+  dxy:
+    source: fred
+    ticker: DTWEXBGS
+    transform: diff_20d_pct
+    weight: 0.15
+
+  skew:
+    source: yahoo
+    ticker: ^SKEW
+    transform: diff_from_ma60
+    weight: 0.05
+
+  breadth_proxy:
+    source: fred
+    tickers: [NASDAQNQUS500LCE, NASDAQNQUS500LC]
+    transform: ratio_chg_20d
+    weight: 0.05
+
+targets:
+  - ticker: ^GSPC
+    horizons: [5, 10, 20]
+  - ticker: ^NDX
+    horizons: [5, 10, 20]
+  - ticker: QQQ
+    horizons: [5, 10, 20]
+
+benchmarks:
+  - source: fred
+    ticker: NFCI
+    frequency: weekly
+  - source: fred
+    ticker: STLFSI4
+    frequency: weekly

@@ -1,0 +1,58 @@
+name: Daily ESI Report
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 08:30 Asia/Shanghai every day.
+    - cron: "30 0 * * *"
+
+jobs:
+  build-report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Check FRED secret
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: |
+          python - <<'PY'
+          import os
+          if not os.environ.get("FRED_API_KEY"):
+              raise SystemExit("Missing GitHub repository secret: FRED_API_KEY")
+          print("FRED_API_KEY is configured")
+          PY
+
+      - name: Run daily ESI pipeline
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: python run_daily.py
+
+      - name: Upload PDF report
+        uses: actions/upload-artifact@v4
+        with:
+          name: esi-daily-report
+          path: reports/*.pdf
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload processed evaluation tables
+        uses: actions/upload-artifact@v4
+        with:
+          name: esi-evaluation-tables
+          path: data/processed/evaluation/*.csv
+          if-no-files-found: warn
+          retention-days: 30
+

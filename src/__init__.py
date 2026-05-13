@@ -1,0 +1,2 @@
+"""Equity Stress Index package."""
+
