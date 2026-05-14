@@ -1,8 +1,5 @@
 name: Daily ESI Report
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 on:
   workflow_dispatch:
   schedule:
@@ -16,10 +13,10 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.11"
           cache: "pip"
@@ -51,7 +48,7 @@ jobs:
         run: python -m src.email_report
 
       - name: Upload PDF report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: esi-daily-report
           path: reports/*.pdf
@@ -59,7 +56,7 @@ jobs:
           retention-days: 30
 
       - name: Upload processed evaluation tables
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: esi-evaluation-tables
           path: data/processed/evaluation/*.csv

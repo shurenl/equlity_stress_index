@@ -39,7 +39,7 @@ https://github.com/shurenl/equlity_stress_index
 
 - 每天北京时间 08:30 自动运行，cron 为 `30 0 * * *` UTC。
 - 支持手动触发 `workflow_dispatch`。
-- workflow 顶层设置 `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true`，提前切到 Node.js 24，避免 GitHub Actions Node.js 20 deprecation warning。
+- workflow 使用 Node.js 24-compatible action 版本：`actions/checkout@v5`、`actions/setup-python@v6`、`actions/upload-artifact@v5`，避免 GitHub Actions Node.js 20 deprecation warning。
 - 安装 Python 3.11 和 `requirements.txt`。
 - 使用 GitHub repository secret `FRED_API_KEY`。
 - 执行 `python run_daily.py`。
@@ -240,7 +240,7 @@ read.md
 
 - 2026-05-13: 新增 GitHub Actions 每日定时任务，自动生成 PDF 并上传 artifact。
 - 2026-05-14: 新增 Gmail SMTP 自动发送 PDF 报告，需要配置 `GMAIL_USERNAME`、`GMAIL_APP_PASSWORD`、可选 `REPORT_EMAIL_TO`。
-- 2026-05-14: GitHub Actions workflow 新增 `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true`，处理 Node.js 20 deprecation warning。
+- 2026-05-14: GitHub Actions workflow 升级到 `checkout@v5`、`setup-python@v6`、`upload-artifact@v5`，移除 Node.js 20 action target。
 - 2026-05-13: 报告层新增 ESI composition 独立页。
 - 2026-05-13: 报告层新增 component detail 小图页，拆开显示每个 ESI 组成项。
 - 2026-05-13: 修复报告数值显示，避免 `dxy`、`vix_term_structure`、`credit_ig` 的 0 nonlinear/contribution 被误读为缺失。
