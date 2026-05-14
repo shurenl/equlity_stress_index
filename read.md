@@ -42,6 +42,7 @@ https://github.com/shurenl/equlity_stress_index
 - 安装 Python 3.11 和 `requirements.txt`。
 - 使用 GitHub repository secret `FRED_API_KEY`。
 - 执行 `python run_daily.py`。
+- 使用 Gmail SMTP 发送最新 PDF。
 - 上传 artifact：
   - `esi-daily-report`: `reports/*.pdf`
   - `esi-evaluation-tables`: `data/processed/evaluation/*.csv`
@@ -54,7 +55,26 @@ Name: FRED_API_KEY
 Value: 用户自己的 FRED key
 ```
 
-注意：workflow 当前是“生成并上传 artifact”，不是发送邮件/Slack/微信。若用户要求真正推送到某个渠道，需要新增对应 secret 和发送 step。
+Gmail 发送还需要：
+
+```text
+Name: GMAIL_USERNAME
+Value: 用户的 Gmail 地址
+
+Name: GMAIL_APP_PASSWORD
+Value: Google 账号生成的 App Password，不是普通登录密码
+
+Name: REPORT_EMAIL_TO
+Value: 收件邮箱；可选，不设置时默认发送给 GMAIL_USERNAME
+```
+
+邮件发送入口：
+
+```text
+src/email_report.py
+```
+
+workflow 会先生成 PDF，再运行 `python -m src.email_report`。PDF 同时保留为 GitHub artifact，便于邮件失败时排查。
 
 ## 当前目录结构
 
@@ -218,6 +238,7 @@ read.md
 ## 最近更新记录
 
 - 2026-05-13: 新增 GitHub Actions 每日定时任务，自动生成 PDF 并上传 artifact。
+- 2026-05-14: 新增 Gmail SMTP 自动发送 PDF 报告，需要配置 `GMAIL_USERNAME`、`GMAIL_APP_PASSWORD`、可选 `REPORT_EMAIL_TO`。
 - 2026-05-13: 报告层新增 ESI composition 独立页。
 - 2026-05-13: 报告层新增 component detail 小图页，拆开显示每个 ESI 组成项。
 - 2026-05-13: 修复报告数值显示，避免 `dxy`、`vix_term_structure`、`credit_ig` 的 0 nonlinear/contribution 被误读为缺失。

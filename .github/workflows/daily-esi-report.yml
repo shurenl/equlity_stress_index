@@ -40,6 +40,13 @@ jobs:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: python run_daily.py
 
+      - name: Send PDF report by Gmail
+        env:
+          GMAIL_USERNAME: ${{ secrets.GMAIL_USERNAME }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          REPORT_EMAIL_TO: ${{ secrets.REPORT_EMAIL_TO }}
+        run: python -m src.email_report
+
       - name: Upload PDF report
         uses: actions/upload-artifact@v4
         with:
@@ -55,4 +62,3 @@ jobs:
           path: data/processed/evaluation/*.csv
           if-no-files-found: warn
           retention-days: 30
-

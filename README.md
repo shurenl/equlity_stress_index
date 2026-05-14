@@ -42,7 +42,11 @@ The repository includes `.github/workflows/daily-esi-report.yml`.
 - Schedule: daily at 08:30 Asia/Shanghai (`00:30 UTC`).
 - Manual trigger: GitHub Actions -> Daily ESI Report -> Run workflow.
 - Required repository secret: `FRED_API_KEY`.
-- Outputs: PDF reports under the `esi-daily-report` artifact and evaluation CSVs under the `esi-evaluation-tables` artifact.
+- Required Gmail secrets for email delivery: `GMAIL_USERNAME` and `GMAIL_APP_PASSWORD`.
+- Optional recipient secret: `REPORT_EMAIL_TO`. If omitted, the report is sent to `GMAIL_USERNAME`.
+- Outputs: PDF reports are emailed by Gmail SMTP, and also saved under the `esi-daily-report` artifact. Evaluation CSVs are saved under the `esi-evaluation-tables` artifact.
+
+For Gmail delivery, create a Google App Password and store it as `GMAIL_APP_PASSWORD`. Do not use or commit your normal Gmail password.
 
 ## Tests
 
