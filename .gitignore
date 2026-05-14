@@ -9,8 +9,10 @@ __pycache__/
 .DS_Store
 data/raw/*
 data/processed/*
+data/diagnostics/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
+!data/diagnostics/.gitkeep
 data/cache_meta.json
 reports/*
 !reports/.gitkeep

@@ -33,7 +33,7 @@ class BaseFactor:
         return frame.sort_index()
 
     def raw_path(self) -> Path:
-        ticker = self.spec.get("tickers", self.spec.get("ticker"))
+        ticker = self.spec.get("ticker_compute", self.spec.get("tickers", self.spec.get("ticker")))
         cache_key = f"{self.spec['source']}_{BaseFetcher._safe_ticker(ticker)}"
         return self.raw_dir / f"{cache_key}.parquet"
 

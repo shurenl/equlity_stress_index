@@ -3,32 +3,58 @@ factors:
     source: fred
     ticker: BAMLH0A0HYM2
     transform: diff_5d
-    weight: 0.30
+    weight: 0.20
     lead_expected: true
+    history_note: "ICE BofA, 3-year rolling window after Apr 2026"
 
   credit_ig:
     source: fred
     ticker: BAMLC0A0CM
     transform: diff_5d
+    weight: 0.05
+
+  credit_baa_10y:
+    source: fred
+    ticker: BAA10Y
+    start: "1986-01-02"
+    transform: diff_5d
+    weight: 0.15
+    history_note: "Moody's seasoned Baa - 10Y Treasury, from 1986-01-02 daily"
+    description: "Long-history IG credit spread. Duration ~20Y, level not directly comparable to ICE BofA but z-score and changes are."
+
+  credit_aaa_10y:
+    source: fred
+    ticker: AAA10Y
+    start: "1983-01-03"
+    transform: diff_5d
+    weight: 0.05
+    history_note: "Moody's seasoned Aaa - 10Y, from 1983-01-03"
+
+  credit_baa_aaa:
+    source: fred
+    ticker_compute: BAA10Y - AAA10Y
+    start: "1986-01-02"
+    transform: diff_5d
     weight: 0.10
+    description: "Pure credit risk premium between Baa and Aaa, isolates default risk from term/duration effects."
 
   vix_term_structure:
     source: yahoo
     tickers: [^VIX, ^VIX3M]
     transform: ratio_minus_one
-    weight: 0.20
+    weight: 0.15
 
   move:
     source: yahoo
     ticker: ^MOVE
     transform: diff_20d_pct
-    weight: 0.15
+    weight: 0.10
 
   dxy:
     source: fred
     ticker: DTWEXBGS
     transform: diff_20d_pct
-    weight: 0.15
+    weight: 0.10
 
   skew:
     source: yahoo

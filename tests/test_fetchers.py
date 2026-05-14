@@ -158,3 +158,27 @@ def test_fred_fetcher_requires_api_key_without_leaking_secret(monkeypatch):
     assert "FRED_API_KEY" in message
     assert "secret" not in message.lower()
     assert os.environ.get("FRED_API_KEY") is None
+
+
+def test_fred_fetcher_supports_safe_compute_expression():
+    class FakeFredClient:
+        def get_series(self, ticker, observation_start=None, observation_end=None):
+            values = {
+                "BAA10Y": [2.0, 2.5],
+                "AAA10Y": [1.0, 1.2],
+            }
+            return pd.Series(values[ticker], index=pd.to_datetime(["2024-01-02", "2024-01-03"]))
+
+    fetcher = FREDFetcher.__new__(FREDFetcher)
+    fetcher.client = FakeFredClient()
+
+    result = fetcher.fetch("BAA10Y - AAA10Y", "2024-01-02", "2024-01-03")
+
+    assert list(result.columns) == ["BAA10Y - AAA10Y"]
+    assert result.loc["2024-01-02", "BAA10Y - AAA10Y"] == 1.0
+    assert result.loc["2024-01-03", "BAA10Y - AAA10Y"] == 1.3
+
+
+def test_fred_fetcher_rejects_unsafe_compute_expression():
+    with pytest.raises(ValueError):
+        FREDFetcher._expression_tickers("__import__('os').system('echo bad')")

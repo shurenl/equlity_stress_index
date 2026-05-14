@@ -43,7 +43,8 @@ def update_data_layer(start: str = DEFAULT_START, end: str | None = None) -> Non
 
     for name, spec in config["factors"].items():
         source = spec["source"]
-        ticker = spec.get("tickers", spec.get("ticker"))
+        ticker = spec.get("ticker_compute", spec.get("tickers", spec.get("ticker")))
+        factor_start = spec.get("start", start)
 
         if source == "fred":
             if "fred" not in fetchers:
@@ -55,7 +56,7 @@ def update_data_layer(start: str = DEFAULT_START, end: str | None = None) -> Non
             raise ValueError(f"Unsupported source for {name}: {source}")
 
         try:
-            fetchers[source].update_cache(name, ticker, start, end, RAW_DIR, META_PATH)
+            fetchers[source].update_cache(name, ticker, factor_start, end, RAW_DIR, META_PATH)
         except Exception as exc:
             failures.append(f"{name} ({source}:{ticker}) failed: {exc}")
 

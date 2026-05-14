@@ -1,0 +1,54 @@
+horizon_scan:
+  horizons: [-20, -10, -5, -3, -1, 0, 1, 3, 5, 10, 20]
+  min_obs: 250
+  significance_threshold: 1.96
+
+rolling_ic:
+  window: 126
+  horizons: [5, 10, 20]
+  min_window_obs: 100
+  long_history_factors:
+    - credit_baa_10y
+    - credit_aaa_10y
+    - credit_baa_aaa
+
+regime_split:
+  methods: [vix, spx_trend, esi_quantile, realized_vol, decade]
+  vix_bins: [0, 15, 25, 100]
+  realized_vol_window: 20
+
+factor_classification:
+  leading_t_threshold: 2.0
+  lagging_t_threshold: 2.0
+  noise_t_threshold: 1.5
+  expected_signs:
+    credit_hy: negative
+    credit_ig: negative
+    credit_baa_10y: negative
+    credit_aaa_10y: negative
+    credit_baa_aaa: negative
+    vix_term_structure: negative
+    move: negative
+    dxy: negative
+    skew: negative
+    breadth_proxy: negative
+    esi_equal_weighted: negative
+    esi_ic_weighted: negative
+
+targets:
+  - ^GSPC
+  - ^NDX
+  - QQQ
+
+historical_events:
+  - {date: "1998-09-23", label: "LTCM"}
+  - {date: "2000-03-10", label: "Dot-com peak"}
+  - {date: "2008-09-15", label: "Lehman"}
+  - {date: "2020-03-09", label: "COVID crash"}
+  - {date: "2022-06-13", label: "2022 bear"}
+  - {date: "2023-03-10", label: "SVB"}
+
+output:
+  report_dir: reports/diagnostics
+  cache_dir: data/diagnostics
+
