@@ -77,6 +77,19 @@ src/email_report.py
 
 workflow 会先生成 PDF，再运行 `python -m src.email_report`。PDF 同时保留为 GitHub artifact，便于邮件失败时排查。
 
+如果 GitHub Actions 只显示 `Process completed with exit code 1`，先展开失败 step 上方日志。当前 workflow 已在 `Check required secrets` step 一次性检查：
+
+- `FRED_API_KEY`
+- `GMAIL_USERNAME`
+- `GMAIL_APP_PASSWORD`
+
+最常见失败原因：
+
+- 没配置某个 repository secret；
+- `GMAIL_APP_PASSWORD` 不是 Google App Password；
+- Google 账号未开启 2-Step Verification，导致无法创建/使用 App Password；
+- Gmail SMTP 登录被 Google 安全策略拒绝。
+
 ## 当前目录结构
 
 ```text

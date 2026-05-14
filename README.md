@@ -49,6 +49,8 @@ The repository includes `.github/workflows/daily-esi-report.yml`.
 
 For Gmail delivery, create a Google App Password and store it as `GMAIL_APP_PASSWORD`. Do not use or commit your normal Gmail password.
 
+If a workflow fails with only `Process completed with exit code 1`, expand the failed step logs. The workflow checks `FRED_API_KEY`, `GMAIL_USERNAME`, and `GMAIL_APP_PASSWORD` before running the pipeline so missing secrets should be reported explicitly.
+
 ## Tests
 
 ```bash
