@@ -41,6 +41,7 @@ The repository includes `.github/workflows/daily-esi-report.yml`.
 
 - Schedule: daily at 08:30 Asia/Shanghai (`00:30 UTC`).
 - Manual trigger: GitHub Actions -> Daily ESI Report -> Run workflow.
+- JavaScript actions opt into Node.js 24 with `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true` to avoid Node.js 20 deprecation warnings.
 - Required repository secret: `FRED_API_KEY`.
 - Required Gmail secrets for email delivery: `GMAIL_USERNAME` and `GMAIL_APP_PASSWORD`.
 - Optional recipient secret: `REPORT_EMAIL_TO`. If omitted, the report is sent to `GMAIL_USERNAME`.
