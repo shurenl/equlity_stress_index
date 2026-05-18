@@ -399,6 +399,22 @@ Step 6 收尾：
   - `build_equal_weighted()` 使用配置权重，并在当日可用因子之间重归一；
   - `build_ic_weighted()` 使用滚动 IC 权重，非 YAML 固定权重。
 
+Step 7 目标长史修复：
+
+- 用户在终端设置 `FRED_API_KEY` 后，diagnostics 已刷新 `fred_SP500.parquet`，但 FRED `SP500` 当前本地有效起点只有 `2016-05-16`，无法满足 1990-2026 长史 IC 要求。
+- 新增 diagnostics 专用 target resolver：
+  - `src/diagnostics/target_loader.py`
+  - `data/local_targets/.gitkeep`
+  - `tests/test_diagnostics.py::test_target_loader_prefers_local_csv_over_fred_cache`
+- `src/diagnostics/run_diagnostics.py` 的 target 加载改为优先读取 `data/local_targets/GSPC.csv`，没有本地 CSV 时再回退 FRED `SP500` 缓存。
+- 本地 CSV 支持列名：
+  - `date,close`
+  - `Date,Close`
+  - `date,adj close`
+  - `date,value`
+- `data/local_targets/*` 已加入 `.gitignore`，不会把手工数据源提交到仓库。
+- 下一步若要真正跑 1990-2026：放入 `data/local_targets/GSPC.csv` 后运行 `.venv/bin/python -m src.diagnostics.run_diagnostics`。
+
 ## 最近更新记录
 
 - 2026-05-13: 新增 GitHub Actions 每日定时任务，自动生成 PDF 并上传 artifact。
@@ -410,6 +426,7 @@ Step 6 收尾：
 - 2026-05-14: Diagnostics Step 4 完成 `credit_baa_10y x ^GSPC x +10D` rolling IC 最小闭环；当前本进程缺少 `FRED_API_KEY`，需用户 shell 复跑以扩展 SP500 到 1990。
 - 2026-05-14: Diagnostics Step 5 完成全因子 rolling IC summary 和诊断 PDF；优化 rolling 索引为有效交集以避免无效长史窗口拖慢。
 - 2026-05-14: Diagnostics Step 6 完成 README 更新和 `tests/test_config.py`，锁定新权重与 diagnostics expected signs 覆盖。
+- 2026-05-15: Diagnostics Step 7 新增本地目标 CSV 优先加载，解决 FRED `SP500` 历史不足导致 rolling IC 不能回到 1990 的问题。
 - 2026-05-13: 报告层新增 ESI composition 独立页。
 - 2026-05-13: 报告层新增 component detail 小图页，拆开显示每个 ESI 组成项。
 - 2026-05-13: 修复报告数值显示，避免 `dxy`、`vix_term_structure`、`credit_ig` 的 0 nonlinear/contribution 被误读为缺失。

@@ -7,6 +7,7 @@ from src.diagnostics.horizon_scan import classify_factor_group, horizon_return, 
 from src.diagnostics.reporting_diag import generate_diagnostics_report
 from src.diagnostics.regime_split import assign_regime
 from src.diagnostics.rolling_ic import rolling_ic_series
+from src.diagnostics.target_loader import load_target_series
 
 
 def test_horizon_scan_recovers_known_positive_ic():
@@ -130,3 +131,25 @@ def test_generate_diagnostics_report(tmp_path):
 
     assert result.exists()
     assert result.stat().st_size > 0
+
+
+def test_target_loader_prefers_local_csv_over_fred_cache(tmp_path):
+    raw_dir = tmp_path / "raw"
+    local_dir = tmp_path / "local_targets"
+    raw_dir.mkdir()
+    local_dir.mkdir()
+    pd.DataFrame(
+        {"SP500": [100.0, 101.0]},
+        index=pd.bdate_range("2024-01-01", periods=2),
+    ).to_parquet(raw_dir / "fred_SP500.parquet")
+    pd.DataFrame(
+        {
+            "date": pd.bdate_range("1990-01-01", periods=3),
+            "close": [300.0, 301.0, 302.0],
+        }
+    ).to_csv(local_dir / "GSPC.csv", index=False)
+
+    result = load_target_series("^GSPC", raw_dir, local_dir)
+
+    assert result.index.min() == pd.Timestamp("1990-01-01")
+    assert result.iloc[0] == 300.0

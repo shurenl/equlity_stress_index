@@ -10,9 +10,11 @@ __pycache__/
 data/raw/*
 data/processed/*
 data/diagnostics/*
+data/local_targets/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 !data/diagnostics/.gitkeep
+!data/local_targets/.gitkeep
 data/cache_meta.json
 reports/*
 !reports/.gitkeep

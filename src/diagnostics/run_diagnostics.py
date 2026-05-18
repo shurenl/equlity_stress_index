@@ -14,6 +14,7 @@ from src.composite import build_composite
 from src.diagnostics.horizon_scan import classification_summary, scan_horizons
 from src.diagnostics.reporting_diag import generate_diagnostics_report
 from src.diagnostics.rolling_ic import rolling_ic_batch, rolling_ic_diagnostics, rolling_ic_series
+from src.diagnostics.target_loader import load_target_series
 from src.factors.base import build_factor_panel
 from src.fetchers.fred_fetcher import FREDFetcher
 
@@ -23,6 +24,7 @@ FACTORS_CONFIG = PROJECT_ROOT / "config" / "factors.yaml"
 DIAGNOSTICS_CONFIG = PROJECT_ROOT / "config" / "diagnostics.yaml"
 RAW_DIR = PROJECT_ROOT / "data" / "raw"
 PROCESSED_DIR = PROJECT_ROOT / "data" / "processed"
+LOCAL_TARGET_DIR = PROJECT_ROOT / "data" / "local_targets"
 META_PATH = PROJECT_ROOT / "data" / "cache_meta.json"
 
 
@@ -60,13 +62,13 @@ def ensure_fred_cache(name: str, ticker: str, start: str, end: str) -> None:
 
 
 def load_targets(target_names: list[str]) -> dict[str, pd.Series]:
-    mapping = {"^GSPC": "SP500", "^NDX": "NASDAQ100"}
     targets = {}
     for name in target_names:
-        if name not in mapping:
-            print(f"Skipping target {name}: no stable local cache mapping yet")
+        try:
+            targets[name] = load_target_series(name, RAW_DIR, LOCAL_TARGET_DIR)
+        except FileNotFoundError as exc:
+            print(f"Skipping target {name}: {exc}")
             continue
-        targets[name] = load_fred_series(mapping[name], name)
     return targets
 
 
@@ -229,7 +231,7 @@ def run_credit_baa_10y_rolling_demo() -> tuple[pd.DataFrame, pd.DataFrame]:
 
     signals, _ = build_signals(factors_config, factor_filter="credit_baa_10y")
     signal = signals["credit_baa_10y"].loc["1990-01-01":]
-    target = load_fred_series("SP500", "^GSPC").loc["1990-01-01":]
+    target = load_target_series("^GSPC", RAW_DIR, LOCAL_TARGET_DIR).loc["1990-01-01":]
     rolling = rolling_ic_series(
         signal=signal,
         target_price=target,

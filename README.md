@@ -75,6 +75,14 @@ Main outputs:
 
 Important: the long-history credit rolling IC page needs long-history `SP500` cache. If `FRED_API_KEY` is exported, the diagnostics entrypoint will update `SP500` from FRED as needed. Without it, diagnostics falls back to the local cache and may only cover the existing shorter window.
 
+If FRED `SP500` does not provide enough history, place a local target CSV at:
+
+```text
+data/local_targets/GSPC.csv
+```
+
+Accepted columns are `date,close`, `Date,Close`, `date,adj close`, or `date,value`. Diagnostics prefers this local CSV over the FRED cache for `^GSPC`, so a 1990-present SPX close file will unlock the intended long-history rolling IC analysis. Local target CSVs are ignored by git.
+
 ## GitHub Actions
 
 The repository includes `.github/workflows/daily-esi-report.yml`.
