@@ -227,7 +227,8 @@ def run_credit_baa_10y_rolling_demo() -> tuple[pd.DataFrame, pd.DataFrame]:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     end = pd.Timestamp.today().normalize().strftime("%Y-%m-%d")
-    ensure_fred_cache("target_sp500_long_history", "SP500", "1990-01-01", end)
+    if not (LOCAL_TARGET_DIR / "GSPC.csv").exists():
+        ensure_fred_cache("target_sp500_long_history", "SP500", "1990-01-01", end)
 
     signals, _ = build_signals(factors_config, factor_filter="credit_baa_10y")
     signal = signals["credit_baa_10y"].loc["1990-01-01":]
