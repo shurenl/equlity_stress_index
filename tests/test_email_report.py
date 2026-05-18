@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from src.email_report import build_message, latest_report_path
+from src.email_report import build_message, latest_diagnostics_report_path, latest_report_path
 
 
 def test_latest_report_path_picks_latest_by_name(tmp_path):
@@ -41,6 +41,31 @@ def test_build_message_attaches_pdf(tmp_path):
     assert attachments[0].get_content_type() == "application/pdf"
 
 
+def test_latest_diagnostics_report_path_picks_latest_by_name(tmp_path):
+    first = tmp_path / "esi_diagnostics_2026-05-12.pdf"
+    second = tmp_path / "esi_diagnostics_2026-05-13.pdf"
+    first.write_bytes(b"%PDF first")
+    second.write_bytes(b"%PDF second")
+
+    assert latest_diagnostics_report_path(tmp_path) == second
+
+
+def test_build_message_attaches_multiple_pdfs(tmp_path):
+    daily = tmp_path / "esi_daily_report_2026-05-13.pdf"
+    diagnostics = tmp_path / "esi_diagnostics_2026-05-13.pdf"
+    daily.write_bytes(b"%PDF daily")
+    diagnostics.write_bytes(b"%PDF diagnostics")
+
+    message = build_message(
+        sender="sender@gmail.com",
+        recipient="recipient@gmail.com",
+        report_paths=[daily, diagnostics],
+    )
+
+    attachments = list(message.iter_attachments())
+    assert [attachment.get_filename() for attachment in attachments] == [daily.name, diagnostics.name]
+
+
 def test_build_message_requires_existing_pdf(tmp_path):
     with pytest.raises(FileNotFoundError):
         build_message(
@@ -48,4 +73,3 @@ def test_build_message_requires_existing_pdf(tmp_path):
             recipient="recipient@gmail.com",
             report_path=Path(tmp_path / "missing.pdf"),
         )
-
