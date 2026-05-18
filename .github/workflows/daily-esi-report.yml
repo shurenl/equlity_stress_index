@@ -63,7 +63,7 @@ jobs:
         run: python -m src.email_report --include-diagnostics
 
       - name: Upload PDF reports
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: esi-pdf-reports
           path: |
@@ -73,7 +73,7 @@ jobs:
           retention-days: 30
 
       - name: Upload processed evaluation tables
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: esi-evaluation-tables
           path: data/processed/evaluation/*.csv
@@ -81,7 +81,7 @@ jobs:
           retention-days: 30
 
       - name: Upload diagnostics tables
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: esi-diagnostics-tables
           path: data/diagnostics/*.parquet

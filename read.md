@@ -40,7 +40,7 @@ https://github.com/shurenl/equlity_stress_index
 
 - 每天北京时间 08:30 自动运行，cron 为 `30 0 * * *` UTC。
 - 支持手动触发 `workflow_dispatch`。
-- workflow 使用 Node.js 24-compatible action 版本：`actions/checkout@v5`、`actions/setup-python@v6`、`actions/upload-artifact@v5`，避免 GitHub Actions Node.js 20 deprecation warning。
+- workflow 使用 Node.js 24-compatible action 版本：`actions/checkout@v5`、`actions/setup-python@v6`、`actions/upload-artifact@v7`，避免 GitHub Actions Node.js 20 deprecation warning。
 - 安装 Python 3.11 和 `requirements.txt`。
 - 使用 GitHub repository secret `FRED_API_KEY`。
 - 执行 `python run_daily.py`。
@@ -419,7 +419,7 @@ Step 7 目标长史修复：
 
 - 2026-05-13: 新增 GitHub Actions 每日定时任务，自动生成 PDF 并上传 artifact。
 - 2026-05-14: 新增 Gmail SMTP 自动发送 PDF 报告，需要配置 `GMAIL_USERNAME`、`GMAIL_APP_PASSWORD`、可选 `REPORT_EMAIL_TO`。
-- 2026-05-14: GitHub Actions workflow 升级到 `checkout@v5`、`setup-python@v6`、`upload-artifact@v5`，移除 Node.js 20 action target。
+- 2026-05-14: GitHub Actions workflow 升级到 `checkout@v5`、`setup-python@v6`，开始移除 Node.js 20 action target。
 - 2026-05-14: Credit Long-History Step 1 完成配置和代码接入，新增 Moody's `BAA10Y/AAA10Y/BAA10Y-AAA10Y` 因子。
 - 2026-05-14: Credit Long-History Step 2 完成验证脚本，BAA10Y vs BAMLC0A0CM 5D-change 替代验证未通过，停止进入 Step 3。
 - 2026-05-14: Diagnostics Step 3 完成 horizon scan 与 regime split 基础模块，生成 IC 矩阵和分类表。
@@ -427,7 +427,7 @@ Step 7 目标长史修复：
 - 2026-05-14: Diagnostics Step 5 完成全因子 rolling IC summary 和诊断 PDF；优化 rolling 索引为有效交集以避免无效长史窗口拖慢。
 - 2026-05-14: Diagnostics Step 6 完成 README 更新和 `tests/test_config.py`，锁定新权重与 diagnostics expected signs 覆盖。
 - 2026-05-15: Diagnostics Step 7 新增本地目标 CSV 优先加载，解决 FRED `SP500` 历史不足导致 rolling IC 不能回到 1990 的问题。
-- 2026-05-18: GitHub Actions 每日邮件改为同时发送 `esi_daily_report_*.pdf` 和 `esi_diagnostics_*.pdf`；workflow 先运行 `scripts/update_local_gspc.py` 生成 1990 至今 SPX 长史，再跑 diagnostics；`actions/upload-artifact` 升级到 `v6` 并设置 `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true`。
+- 2026-05-18: GitHub Actions 每日邮件改为同时发送 `esi_daily_report_*.pdf` 和 `esi_diagnostics_*.pdf`；workflow 先运行 `scripts/update_local_gspc.py` 生成 1990 至今 SPX 长史，再跑 diagnostics；`actions/upload-artifact` 升级到 `v7` 并设置 `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true`。
 - 2026-05-13: 报告层新增 ESI composition 独立页。
 - 2026-05-13: 报告层新增 component detail 小图页，拆开显示每个 ESI 组成项。
 - 2026-05-13: 修复报告数值显示，避免 `dxy`、`vix_term_structure`、`credit_ig` 的 0 nonlinear/contribution 被误读为缺失。

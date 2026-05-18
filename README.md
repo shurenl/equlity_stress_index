@@ -89,13 +89,13 @@ The repository includes `.github/workflows/daily-esi-report.yml`.
 
 - Schedule: daily at 08:30 Asia/Shanghai (`00:30 UTC`).
 - Manual trigger: GitHub Actions -> Daily ESI Report -> Run workflow.
-- JavaScript actions use Node.js 24-compatible versions: `actions/checkout@v5`, `actions/setup-python@v6`, and `actions/upload-artifact@v5`.
+- JavaScript actions use Node.js 24-compatible versions: `actions/checkout@v5`, `actions/setup-python@v6`, and `actions/upload-artifact@v7`.
 - Required repository secret: `FRED_API_KEY`.
 - Required Gmail secrets for email delivery: `GMAIL_USERNAME` and `GMAIL_APP_PASSWORD`.
 - Optional recipient secret: `REPORT_EMAIL_TO`. If omitted, the report is sent to `GMAIL_USERNAME`.
 - Outputs: the daily ESI PDF and diagnostics PDF are emailed together by Gmail SMTP, and also saved under the `esi-pdf-reports` artifact. Evaluation CSVs are saved under the `esi-evaluation-tables` artifact; diagnostics parquet tables are saved under `esi-diagnostics-tables`.
 - The workflow downloads local SPX history via `scripts/update_local_gspc.py` before diagnostics so `credit_baa_10y` rolling IC can use 1990-present SPX history.
-- The workflow sets `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true` and uses `actions/upload-artifact@v6` to avoid Node.js 20 action deprecation warnings.
+- The workflow sets `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true` and uses `actions/upload-artifact@v7` to avoid Node.js 20 action deprecation warnings.
 
 For Gmail delivery, create a Google App Password and store it as `GMAIL_APP_PASSWORD`. Do not use or commit your normal Gmail password.
 
