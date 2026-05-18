@@ -55,6 +55,9 @@ jobs:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: python -m src.diagnostics.run_diagnostics
 
+      - name: Verify diagnostics validation chart exists
+        run: test -s data/diagnostics/credit_substitute_validation.png
+
       - name: Send PDF reports by Gmail
         env:
           GMAIL_USERNAME: ${{ secrets.GMAIL_USERNAME }}

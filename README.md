@@ -44,6 +44,7 @@ The factor config now includes Moody's long-history credit spread proxies:
 - `credit_baa_aaa`: computed `BAA10Y - AAA10Y`, pure Baa-vs-Aaa credit premium.
 
 These series provide longer credit history than the ICE BofA OAS series currently available from FRED. Moody's spread levels are not directly comparable to ICE BofA OAS levels because of duration/composition differences; use z-scores and changes for ESI diagnostics.
+`credit_baa_aaa` is especially useful as a cleaner lower-grade credit risk premium because it subtracts Aaa from Baa and therefore removes much of the common Treasury duration component embedded in both Moody's spread series.
 
 Current configured weights sum to 1.0 and are read directly by the composite layer from `config/factors.yaml`:
 
@@ -72,6 +73,8 @@ Main outputs:
 - `data/diagnostics/credit_substitute_validation.png`
 - `data/diagnostics/credit_long_history_ic_analysis.png`
 - `reports/diagnostics/esi_diagnostics_YYYY-MM-DD.pdf`
+
+The diagnostics entrypoint automatically regenerates `credit_substitute_validation.png` before building the PDF. If Moody's-vs-ICE correlation is below threshold, the chart is still included and the report continues with a warning.
 
 Important: the long-history credit rolling IC page needs long-history `SP500` cache. If `FRED_API_KEY` is exported, the diagnostics entrypoint will update `SP500` from FRED as needed. Without it, diagnostics falls back to the local cache and may only cover the existing shorter window.
 

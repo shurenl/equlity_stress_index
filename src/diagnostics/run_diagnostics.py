@@ -17,6 +17,7 @@ from src.diagnostics.rolling_ic import rolling_ic_batch, rolling_ic_diagnostics,
 from src.diagnostics.target_loader import load_target_series
 from src.factors.base import build_factor_panel
 from src.fetchers.fred_fetcher import FREDFetcher
+from scripts.validate_credit_substitute import validate_credit_substitute
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -26,6 +27,13 @@ RAW_DIR = PROJECT_ROOT / "data" / "raw"
 PROCESSED_DIR = PROJECT_ROOT / "data" / "processed"
 LOCAL_TARGET_DIR = PROJECT_ROOT / "data" / "local_targets"
 META_PATH = PROJECT_ROOT / "data" / "cache_meta.json"
+
+
+def ensure_credit_validation_chart() -> None:
+    try:
+        validate_credit_substitute(warn_only=True)
+    except Exception as exc:
+        print(f"Warning: could not generate credit substitute validation chart: {exc}")
 
 
 def load_yaml(path: Path) -> dict[str, Any]:
@@ -313,6 +321,7 @@ def run_full_diagnostics(no_pdf: bool = False) -> tuple[pd.DataFrame, pd.DataFra
 
     rolling, rolling_summary = run_full_rolling_ic(signals, targets)
     run_credit_baa_10y_rolling_demo()
+    ensure_credit_validation_chart()
 
     if not no_pdf:
         today = pd.Timestamp.today().strftime("%Y-%m-%d")

@@ -428,6 +428,7 @@ Step 7 目标长史修复：
 - 2026-05-14: Diagnostics Step 6 完成 README 更新和 `tests/test_config.py`，锁定新权重与 diagnostics expected signs 覆盖。
 - 2026-05-15: Diagnostics Step 7 新增本地目标 CSV 优先加载，解决 FRED `SP500` 历史不足导致 rolling IC 不能回到 1990 的问题。
 - 2026-05-18: GitHub Actions 每日邮件改为同时发送 `esi_daily_report_*.pdf` 和 `esi_diagnostics_*.pdf`；workflow 先运行 `scripts/update_local_gspc.py` 生成 1990 至今 SPX 长史，再跑 diagnostics；`actions/upload-artifact` 升级到 `v7` 并设置 `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true`。
+- 2026-05-18: 修复 diagnostics PDF 中 `Credit Substitute Validation` 缺图问题：`run_diagnostics` 现在会自动调用 `validate_credit_substitute(warn_only=True)` 生成 PNG，相关性不达标只警告不中断；同时新增 `credit_baa_aaa` 在日报和诊断报告中的解释。
 - 2026-05-13: 报告层新增 ESI composition 独立页。
 - 2026-05-13: 报告层新增 component detail 小图页，拆开显示每个 ESI 组成项。
 - 2026-05-13: 修复报告数值显示，避免 `dxy`、`vix_term_structure`、`credit_ig` 的 0 nonlinear/contribution 被误读为缺失。

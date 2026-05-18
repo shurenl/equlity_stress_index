@@ -30,6 +30,7 @@ def validate_credit_substitute(
     start: str = "2023-05-15",
     end: str | None = None,
     min_corr: float = 0.80,
+    warn_only: bool = False,
 ) -> dict[str, float]:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     baa = load_series(RAW_DIR / "fred_BAA10Y.parquet", "BAA10Y")
@@ -108,10 +109,15 @@ def validate_credit_substitute(
         print(f"{key}: {value}")
     print(f"chart: {output_path}")
 
-    if not results["passed"]:
+    if not results["passed"] and not warn_only:
         raise SystemExit(
             "Validation failed: 5D change and/or 5D-change z-score correlation is below "
             f"{min_corr:.2f}. Stop before Step 3 and review substitute assumption."
+        )
+    if not results["passed"]:
+        print(
+            "Warning: credit substitute validation is below threshold; "
+            "chart was still generated for diagnostics reporting."
         )
 
     return results
@@ -122,10 +128,10 @@ def main() -> None:
     parser.add_argument("--start", default="2023-05-15")
     parser.add_argument("--end", default=None)
     parser.add_argument("--min-corr", type=float, default=0.80)
+    parser.add_argument("--warn-only", action="store_true", help="Generate the chart and warn instead of exiting nonzero.")
     args = parser.parse_args()
-    validate_credit_substitute(start=args.start, end=args.end, min_corr=args.min_corr)
+    validate_credit_substitute(start=args.start, end=args.end, min_corr=args.min_corr, warn_only=args.warn_only)
 
 
 if __name__ == "__main__":
     main()
-

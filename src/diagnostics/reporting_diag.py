@@ -8,6 +8,22 @@ import pandas as pd
 from matplotlib.backends.backend_pdf import PdfPages
 
 
+FACTOR_EXPLANATIONS = {
+    "credit_hy": "ICE BofA high-yield OAS. Short-history, high-frequency credit stress proxy; rising changes are stress-positive.",
+    "credit_ig": "ICE BofA investment-grade OAS. Short-history IG spread stress proxy.",
+    "credit_baa_10y": "Moody's Baa minus 10Y Treasury spread. Long-history IG credit stress proxy; level differs from OAS, so use changes/z-scores.",
+    "credit_aaa_10y": "Moody's Aaa minus 10Y Treasury spread. High-grade credit and duration-sensitive stress proxy.",
+    "credit_baa_aaa": "Moody's Baa minus Aaa spread. Pure lower-grade credit risk premium that removes much of the common Treasury duration component.",
+    "vix_term_structure": "VIX/VIX3M minus one. Positive values indicate near-term equity volatility stress versus 3M volatility.",
+    "move": "MOVE index change. Captures rates volatility stress.",
+    "dxy": "Broad dollar change. Dollar strength can tighten global financial conditions.",
+    "skew": "SKEW deviation from its 60D average. Captures equity tail-risk pricing.",
+    "breadth_proxy": "Equal-weight versus cap-weight breadth proxy. Equal-weight underperformance is stress-positive.",
+    "esi_equal_weighted": "Configured-weight ESI composite using YAML weights and available-factor reweighting.",
+    "esi_ic_weighted": "Rolling IC-weighted ESI composite. Uses historical IC weights and avoids future data.",
+}
+
+
 def _blank_page(title: str, lines: list[str], pdf: PdfPages) -> None:
     fig, ax = plt.subplots(figsize=(11, 8.5))
     ax.axis("off")
@@ -129,10 +145,16 @@ def _executive_summary(
         f"Leading candidates: {', '.join(leading_names) if leading_names else 'None'}",
         f"Reversed / needs redesign: {', '.join(reversed_names) if reversed_names else 'None'}",
         credit_line,
+        "credit_baa_aaa definition: Moody's Baa minus Aaa spread; a lower-grade credit premium designed to strip out common Treasury duration effects.",
         f"Credit substitute validation image: {'available' if validation_path.exists() else 'missing'}",
         f"Credit long-history chart: {'available' if credit_chart_path.exists() else 'missing'}",
         "Recommendation: treat the current ESI as a stress-condition diagnostic until reversed/lagging factors are redesigned.",
     ]
+
+
+def _factor_explanations_page(pdf: PdfPages) -> None:
+    lines = [f"{name}: {description}" for name, description in FACTOR_EXPLANATIONS.items()]
+    _blank_page("Factor Definitions", lines, pdf)
 
 
 def generate_diagnostics_report(
@@ -151,6 +173,7 @@ def generate_diagnostics_report(
             _executive_summary(classification, rolling_summary, validation_path, credit_chart_path),
             pdf,
         )
+        _factor_explanations_page(pdf)
         if not classification.empty:
             _table_page("Factor Classification", classification, pdf)
         if not rolling_summary.empty:

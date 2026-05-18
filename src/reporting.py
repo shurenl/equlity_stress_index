@@ -23,6 +23,9 @@ INTERPRETATIONS = {
 COMPONENT_MEANINGS = {
     "credit_hy": "High-yield credit spread stress. Rising HY OAS changes are stress-positive.",
     "credit_ig": "Investment-grade credit spread stress. Rising IG OAS changes are stress-positive.",
+    "credit_baa_10y": "Long-history Moody's Baa minus 10Y Treasury spread. Captures IG credit stress over a much longer sample than ICE BofA.",
+    "credit_aaa_10y": "Long-history Moody's Aaa minus 10Y Treasury spread. Captures high-grade credit and duration-sensitive stress.",
+    "credit_baa_aaa": "Moody's Baa minus Aaa spread. This isolates the lower-grade credit risk premium from broad Treasury duration effects.",
     "vix_term_structure": "Equity volatility term structure. VIX/VIX3M above normal means near-term fear is elevated.",
     "move": "Rates volatility stress. Rising MOVE indicates unstable Treasury/rates conditions.",
     "dxy": "Broad dollar pressure. Dollar strength can tighten global financial conditions.",
